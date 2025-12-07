@@ -4,7 +4,7 @@ Esta pasta será o lugar oficial do código da interface de chat construída no 
 
 Por enquanto, o código-fonte está sincronizado no repositório:
 
-- [`brainlabzai/heart-centrix-mockup`](https://github.com/brainlabzai/heartcentrix-bcg-legalops-frontend)
+- [`brainlabzai/heartcentrix-bcg-legalops-frontend`](https://github.com/brainlabzai/heartcentrix-bcg-legalops-frontend)
 
 ## Próximos passos (planejados)
 
