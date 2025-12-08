@@ -1,0 +1,457 @@
+{
+  "name": "HeartCentrix (BCG) - RAG AI Legal",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 6
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -80,
+        176
+      ],
+      "id": "7d9eca85-aaa0-494b-ab6a-e1c2d9485700",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1200,
+        384
+      ],
+      "id": "8df59a80-3ab2-4e5e-9842-b583db91e43e",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "OLjd5I8qeIG7smDq",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $json.content }}",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "source",
+                "value": "={{ $json.source }}{{ $('DB - URLs').item.json.source }}"
+              },
+              {
+                "name": "url",
+                "value": "={{ $json.url }}{{ $('DB - URLs').item.json.url }}"
+              },
+              {
+                "name": "title",
+                "value": "={{ $json.title }}{{ $('DB - URLs').item.json.title }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        1344,
+        432
+      ],
+      "id": "f523fdc5-71a1-43c3-8421-61a21c131649",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "content": "## 1. Trigger\n",
+        "height": 784,
+        "width": 224
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -112,
+        -80
+      ],
+      "typeVersion": 1,
+      "id": "9c543613-86fc-4457-b99b-9ab9b8cb6fb4",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## 2. Extract (URL's and PDF's)",
+        "height": 784,
+        "width": 352,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        128,
+        -80
+      ],
+      "typeVersion": 1,
+      "id": "fa048c64-9a8f-4ec4-8640-b04952a5680a",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## 4. Load embeeded data to a vectorial database on Supabase",
+        "height": 784,
+        "width": 512,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1072,
+        -80
+      ],
+      "typeVersion": 1,
+      "id": "1c1fbd8e-fd2c-40d5-8c30-8c0d954a35bc",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## 3. Transform with JS",
+        "height": 784,
+        "width": 560,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        496,
+        -80
+      ],
+      "typeVersion": 1,
+      "id": "098eb821-2043-405e-ac1c-d9412cddccc2",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "heartcentrix-db",
+          "mode": "list",
+          "cachedResultName": "heartcentrix-db"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        1232,
+        176
+      ],
+      "id": "e790ee43-b33c-4129-9f62-36d68aaaa8b9",
+      "name": "Supabase Vector Store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "igTbYemEwfUiuml6",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## ETL Workflow",
+        "height": 80,
+        "width": 1696,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -112,
+        -176
+      ],
+      "typeVersion": 1,
+      "id": "e79bde51-f908-47d5-9f21-8a99ec6c85d3",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "jsCode": "const urls = [\n  // ===== EXISTENTES =====\n  {\n    source: 'legal_ops_guide',\n    url: 'https://juro.com/learn/legal-operations',\n    title: 'Your ultimate guide to legal operations in 2025 - Juro',\n  },\n  {\n    source: 'legal_ops_best_practices',\n    url: 'https://www.checkbox.ai/legal-operations/legal-operations-best-practices',\n    title: 'Legal Operations Best Practices - Checkbox',\n  },\n  {\n    source: 'legal_ops_best_practices',\n    url: 'https://blog.lexcheck.com/legal-operations-best-practices-2022-edition-lc',\n    title: 'Legal Operations Best Practices: 2022 Edition - LexCheck',\n  },\n  {\n    source: 'legal_ops_core12',\n    url: 'https://www.streamline.ai/article/a-deep-dive-into-legal-operations',\n    title: 'Legal Operations 101 & CLOC Core 12 - Streamline.ai',\n  },\n  {\n    source: 'legal_ops_foundations',\n    url: 'https://www.acc.com/services-initiatives/legal-operations/about-corporate-legal-operations',\n    title: 'About the Corporate Legal Operations Function - ACC',\n  },\n  {\n    source: 'legal_ops_guide',\n    url: 'https://bryter.com/blog/what-is-legal-operations/',\n    title: 'What is Legal Operations? A Complete Guide - Bryter',\n  },\n  {\n    source: 'legal_ops_best_practices',\n    url: 'https://sandstone.ai/blog/transforming-legal-operations-best-practices-for-lean-teams',\n    title: 'Transforming Legal Operations: Best Practices for Lean Teams - Sandstone AI',\n  },\n  {\n    source: 'legal_ops_team',\n    url: 'https://centerbase.com/blog/your-guide-to-building-a-strong-legal-operations-team/',\n    title: 'Your Guide to Building a Strong Legal Operations Team - Centerbase',\n  },\n\n  // ===== CLIENTE – HEARTCENTRIX / CONTEXTO DE STAFFING =====\n  {\n    source: 'heartcentrix',\n    url: 'https://heartcentrix.com/',\n    title: 'HeartCentrix - Home',\n  },\n  {\n    source: 'heartcentrix',\n    url: 'https://heartcentrix.com/about/',\n    title: 'HeartCentrix Code Report',\n  },\n  {\n    source: 'aaron-jenkins',\n    url: 'https://theorg.com/org/heartcentrix-solutions/org-chart/aaron-jenkins',\n    title: 'Aaron Jenkins - CEO HeartCentrix',\n  },\n\n  // ===== LEGAL INTAKE WORKFLOWS & TRIAGE =====\n  {\n    source: 'legal_intake_workflows',\n    url: 'https://www.onit.com/blog/effective-legal-matter-management/',\n    title: 'Onit - Legal Matter Management',\n  },\n  {\n    source: 'legal_intake_workflows',\n    url: 'https://www.onit.com/blog/measure-legal-department-kpis/',\n    title: 'Onit - Measure Legal Department',\n  },  \n  {\n    source: 'legal_intake_workflows',\n    url: 'https://www.onit.com/blog/unified-legal-operations-onit/',\n    title: 'Onit - Unified Legal Operations',\n  },    \n  {\n    source: 'legal_intake_workflows',\n    url: 'https://www.simplelegal.com/blog/legal-intake-matters',\n    title: 'Improving Legal Intake & Matter Management - SimpleLegal',\n  },\n\n  // ===== CONTRACT LIFECYCLE GOVERNANCE / CLM / APPROVAL FLOWS =====\n  {\n    source: 'clm_governance',\n    url: 'https://legal.thomsonreuters.com/en/insights/white-papers/maximizing-your-ai-investment/',\n    title: 'Maximizing AI Invest Legal - Thomson Reuters',\n  },\n  {\n    source: 'clm_process_maps',\n    url: 'https://artofprocurement.com/blog/enterprise-contract-management-best-practices',\n    title: 'Enterprise Contract Management Practices',\n  },\n  {\n    source: 'legal_playbooks_templates',\n    url: 'https://contractpodai.com/news/clm-readiness-for-enterprise/',\n    title: 'Contract Playbook CLM Enterprise - ContractPodAI',\n  },    \n  {\n    source: 'legal_playbooks_templates',\n    url: 'https://contractpodai.com/news/how-to-set-ai-policies/',\n    title: 'Contract Playbook Best Practices - ContractPodAI',\n  },\n];\n\nreturn urls.map(u => ({ json: u }));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        192,
+        80
+      ],
+      "id": "8b28ee41-0f86-468b-ba4a-3ac01162a113",
+      "name": "DB - URLs"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        336,
+        80
+      ],
+      "id": "f4c6de20-f749-4b99-8ea0-b001398c687c",
+      "name": "GET URLs"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "15LJeohmpryfwq-Pa0w4FQfl-Hp7y6MbP",
+          "mode": "list",
+          "cachedResultName": "DB - Sources.pdf",
+          "cachedResultUrl": "https://drive.google.com/file/d/15LJeohmpryfwq-Pa0w4FQfl-Hp7y6MbP/view?usp=drivesdk"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        256,
+        304
+      ],
+      "id": "afa6af18-52f4-4afe-82e7-d1c9cec92138",
+      "name": "DB - PDFs",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "YfS5WgiS2rSs7bFa",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c5520772-d971-4887-aeb3-c2feb0899608",
+              "name": "content",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "a03fd7f8-3383-415f-9e4d-686fadd504bd",
+              "name": "source",
+              "value": "={{ $json.info.Producer }}",
+              "type": "string"
+            },
+            {
+              "id": "82fd6552-6fc9-42e6-a57a-4c8e57b1f310",
+              "name": "url",
+              "value": "={{ $json.info.EncryptFilterName }}",
+              "type": "string"
+            },
+            {
+              "id": "97d5233d-8f7e-414b-95ab-24afddaab763",
+              "name": "title",
+              "value": "={{ $json.info.Title }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        720,
+        304
+      ],
+      "id": "f5f39573-e303-47ec-8c4f-f7a9a94afbd5",
+      "name": "Transform columns"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Este node recebe os items processados do PDF\n// e padroniza para o formato que o Supabase Vector Store espera\n\nreturn items.map(item => {\n  // 1) Identifica onde está o texto extraído.\n  // IMPORTANTE: Verifique se o node anterior (Transform columns) \n  // está soltando o texto em 'text', 'content' ou outro nome.\n  // Aqui estou assumindo item.json.text ou item.json.content\n  const rawText = item.json.text || $input.first().json.content || '';\n\n  // 2) Limpeza específica para PDF\n  let text = rawText\n    // Remove quebras de linha excessivas que PDFs costumam gerar\n    .replace(/(\\r\\n|\\n|\\r)/gm, ' ') \n    // Remove caracteres estranhos ou não imprimíveis se necessário\n    // .replace(/[^\\x20-\\x7E]/g, '') \n    // Normaliza espaços múltiplos para um único espaço\n    .replace(/\\s+/g, ' ')\n    .trim();\n\n  // Fallback caso o texto venha vazio\n  if (!text) {\n    text = \"Conteúdo não identificado ou PDF vazio.\";\n  }\n\n  // 3) Retorna a estrutura exata que o Vector Store precisa\n  // Mapeie os metadados (Source, URL, Title) conforme vêm do Google Drive/Transform\n  return {\n    json: {\n      source: 'Google Drive', // Pode ser fixo ou dinâmico\n      url: item.json.webViewLink || $input.first().json.url || 'Sem Link', // Link do arquivo no Drive\n      title: item.json.name || $input.first().json.title || 'Sem Título', // Nome do arquivo\n      content: text, // O texto limpo para ser vetorizado\n    },\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        304
+      ],
+      "id": "01080c0f-ecf4-4455-9cf5-b11c38ca1a68",
+      "name": "PDF - Data Cleaning & Embeeding"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Este node recebe vários items (um por URL)\n// e devolve vários items, cada um com: source, url, title, content (texto limpo)\n\nreturn items.map(item => {\n  // 1) Pega o HTML cru da resposta do HTTP Request\n  //    (ajusta caso o seu campo seja outro, tipo item.json.body)\n  const html = item.json.data || item.json.body || '';\n\n  // 2) Remove scripts, styles e tags HTML pra virar texto plano\n  let text = html\n    .replace(/<script[\\s\\S]*?<\\/script>/gi, ' ')\n    .replace(/<style[\\s\\S]*?<\\/style>/gi, ' ')\n    .replace(/<[^>]+>/g, ' ')      // remove tags <...>\n    .replace(/\\s+/g, ' ')          // normaliza espaços\n    .trim();\n\n  // Se der algum problema e vier vazio, ainda assim devolve algo simples\n  if (!text) {\n    text = html.slice(0, 2000); // fallback tosco, mas melhor do que nada\n  }\n\n  return {\n    json: {\n      source: item.json.source,\n      url: item.json.url,\n      title: item.json.title,\n      content: text,\n    },\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        80
+      ],
+      "id": "b7f60d96-6536-4163-88e2-c638bf4fbf7b",
+      "name": "URL - Data Cleaning & Embeeding"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        544,
+        304
+      ],
+      "id": "da739612-6b5a-4ac9-b7db-a4aabdd1edc7",
+      "name": "PDF - Data Extraction"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "DB - URLs",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "DB - PDFs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store": {
+      "main": [
+        []
+      ]
+    },
+    "DB - URLs": {
+      "main": [
+        [
+          {
+            "node": "GET URLs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET URLs": {
+      "main": [
+        [
+          {
+            "node": "URL - Data Cleaning & Embeeding",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DB - PDFs": {
+      "main": [
+        [
+          {
+            "node": "PDF - Data Extraction",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transform columns": {
+      "main": [
+        [
+          {
+            "node": "PDF - Data Cleaning & Embeeding",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PDF - Data Cleaning & Embeeding": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "URL - Data Cleaning & Embeeding": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PDF - Data Extraction": {
+      "main": [
+        [
+          {
+            "node": "Transform columns",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionId": "eb1b907b-6606-4cf1-bac4-7f89bb1ff181",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "915da6e074558c6460b416cf4d12943cce6d9a7e6c95921816e83a4684efc0bb"
+  },
+  "id": "SEgsoxQt5vHDRPH2",
+  "tags": []
+}
