@@ -1,4 +1,4 @@
-# HeartCentrix BCG LegalOps Agent – Backend (n8n + Supabase)
+# HeartCentrix BCG LegalOps Agent – Frontend (link redirect to other GIT with Lovable repo) + Backend (n8n + Supabase)
 
 This repository contains the backend for the **HeartCentrix × BCG AI LegalOps Assistant**.
 
